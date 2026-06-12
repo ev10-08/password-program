@@ -1,0 +1,108 @@
+#include <iostream>
+#include <cctype>
+#include <string>
+
+using namespace std; 
+
+void startProgram(string& userPass1); //initial password function
+void passwordChecks(bool& isUpper, bool& isLower, bool& isNumber, string& userPass1); //function to check all requirements for the password
+void passwordErrors(string& userPass1, bool& lengthValidation, bool& isNumber, bool& isUpper, bool& isLower, bool& passValidation); //function that informs of the errors made, checks length, and validifies or denies password.
+
+
+
+int main()
+{
+    string userPass1, userPass2;
+    
+    bool isNumber, isUpper, isLower;
+    bool passValidation = false;
+    bool lengthValidation = false;
+    
+    int failedAttempts = 0; 
+    
+    do {
+        startProgram (userPass1);
+        passwordChecks (isUpper, isLower, isNumber, userPass1);
+        passwordErrors (userPass1, lengthValidation, isNumber, isUpper, isLower, passValidation);
+        
+    } while (!passValidation);
+    
+    if (passValidation) {
+        cout << "\nFirst password was valid. Please enter it again for verification." << endl;
+        getline(cin, userPass2);
+    } while (userPass2 != userPass1) {
+        failedAttempts = failedAttempts + 1;
+        cout << "Passwrod did not match what was previously entered. Please try again.\nAttempts " << failedAttempts << "/3" << endl;
+        getline(cin, userPass2);
+        
+        if (failedAttempts == 3) {
+            cout << "Program ending. Too many failed attempts.";
+            return 0;
+        }
+        
+        if (userPass1 == userPass2) {
+            cout << "Your password was valid.";
+            return 0; 
+        }
+    }
+    
+    
+}
+
+
+void startProgram (string& userPass1) { //program at boot that explains requirements
+    cout << "-----------------------------------------------------------------------------" << endl;
+    cout << "| Please create a password. The password must fit under these requirements. |" << endl; 
+    cout << "|             - Contains at least one uppercase character.                  |" << endl;
+    cout << "|             - Contains at least one lowercase character.                  |" << endl;
+    cout << "|                   - Contains at least one number                          |" << endl;
+    cout << "|            - Is at least 8 chatacters long but no more than 20.           |" << endl;
+    cout << "-----------------------------------------------------------------------------" << endl;
+    cout << "\nPassword: ";
+    
+    getline(cin, userPass1);
+}
+
+void passwordChecks(bool& isUpper, bool& isLower, bool& isNumber, string& userPass1) { //checks for lowercase, uppercase, and digit characters
+    int i = 0;
+    do { 
+     if (isupper(userPass1[i])) {
+         isUpper = true;
+     } else if (islower(userPass1[i])) {
+         isLower = true;
+     } else if (isdigit(userPass1[i])) {
+         isNumber = true;
+     }
+    
+    
+    i++;
+    } while (i < userPass1.length());
+    
+}
+
+void passwordErrors(string& userPass1, bool& lengthValidation, bool& isNumber, bool& isUpper, bool& isLower, bool& passValidation) { //searches for errors and informs the user of the missing requirements.
+    if (userPass1.length() >= 8 and userPass1.length() <= 20) {
+        lengthValidation = true;
+    }
+    if (isUpper == true && isLower == true && isNumber == true && lengthValidation == true) {
+        passValidation = true;
+    }
+    if (isLower == false) {
+        cout << "\nYou're missing a lowercase letter." << endl;
+    }
+    if (isUpper == false) {
+        cout << "\nYou're missing an uppercase letter." << endl;
+    }
+    if (isNumber == false) {
+        cout << "\nYou're missing a number." << endl;
+    }
+    if (lengthValidation == false) {
+        cout << "\nYour password is either too short or too long. You need at least 8 characters but at most 20.\n" << endl;
+    }
+    if (passValidation == false) {
+        lengthValidation = false;
+        isUpper = false;
+        isLower = false;
+        isNumber = false;
+    }
+}
